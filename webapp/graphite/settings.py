@@ -14,14 +14,14 @@ limitations under the License."""
 # Django settings for graphite project.
 # DO NOT MODIFY THIS FILE DIRECTLY - use local_settings.py instead
 import sys, os
-from os.path import join, dirname, abspath
+from os.path import join, dirname, abspath, realpath
 
 WEBAPP_VERSION = '0.9.9'
 DEBUG = False
 JAVASCRIPT_DEBUG = False
 
 # Filesystem layout (all directores should end in a /)
-WEB_DIR = dirname( abspath(__file__) ) + '/'
+WEB_DIR = dirname( realpath( abspath(__file__) ) ) + '/'
 WEBAPP_DIR = dirname( dirname(WEB_DIR) ) + '/'
 GRAPHITE_ROOT = dirname( dirname(WEBAPP_DIR) ) + '/'
 CONTENT_DIR = WEBAPP_DIR + 'content/'
