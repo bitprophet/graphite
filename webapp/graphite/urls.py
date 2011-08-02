@@ -34,7 +34,7 @@ urlpatterns = patterns('',
   ('^account/', include('graphite.account.urls')),
   ('^dashboard/', include('graphite.dashboard.urls')),
   ('^whitelist/', include('graphite.whitelist.urls')),
-  ('^content/(?P<path>.*)$', 'django.views.static.serve', {'document_root' : settings.CONTENT_DIR}),
+  url('^content/(?P<path>.*)$', 'django.views.static.serve', {'document_root' : settings.CONTENT_DIR}, name='content'),
   ('^graphlot/', include('graphite.graphlot.urls')),
   ('', 'graphite.browser.views.browser'),
 )

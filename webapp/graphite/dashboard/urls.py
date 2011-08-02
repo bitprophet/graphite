@@ -8,5 +8,5 @@ urlpatterns = patterns('graphite.dashboard.views',
   ('^find/', 'find'),
   ('^help/', 'help'),
   ('^(?P<name>[^/]+)', 'dashboard'),
-  ('', 'dashboard'),
+  url('', 'dashboard', name='dashboard'),
 )
