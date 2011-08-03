@@ -85,12 +85,12 @@ LDAP_BASE_PASS = "" # "my_password"
 LDAP_USER_QUERY = "" # "(username=%s)"  For Active Directory use "(sAMAccountName=%s)"
 
 #Database settings, sqlite is intended for single-server setups
-DATABASE_ENGINE = 'sqlite3'			# 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_NAME = STORAGE_DIR + 'graphite.db'	# Or path to database file if using sqlite3.
-DATABASE_USER = ''				# Not used with sqlite3.
-DATABASE_PASSWORD = ''				# Not used with sqlite3.
-DATABASE_HOST = ''				# Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''				# Set to empty string for default. Not used with sqlite3.
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': STORAGE_DIR + 'graphite.db'
+    }
+}
 
 DASHBOARD_CONF = join(CONF_DIR, 'dashboard.conf')
 GRAPHTEMPLATES_CONF = join(CONF_DIR, 'graphTemplates.conf')
