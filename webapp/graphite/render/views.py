@@ -131,19 +131,35 @@ def renderView(request):
       return response
 
     if format == 'json':
+      # Render graph to obtain yStep, yUnitSystem info
+      graphOptions['data'] = data
+      graph = requestOptions['graphClass'](**graphOptions)
+      # Prepare series data for JSON
       series_data = []
       for series in data:
         timestamps = range(series.start, series.end, series.step)
         datapoints = zip(series, timestamps)
-        series_data.append( dict(target=series.name, datapoints=datapoints) )
-
+        cleaned = filter(lambda x: x is not None, series)
+        info = {
+            'target': series.name,
+            'datapoints': datapoints,
+        }
+        raw_stats = {
+            'min': min(cleaned),
+            'max': max(cleaned),
+            'mean': sum(cleaned) / len(cleaned)
+        }
+        formatted_stats = {}
+        for key, value in raw_stats.items():
+            formatted_stats[key] = graph.makeLabel(value)
+        info['stats'] = {'raw': raw_stats, 'formatted': formatted_stats}
+        series_data.append(info)
       if 'jsonp' in requestOptions:
         response = HttpResponse(
           content="%s(%s)" % (requestOptions['jsonp'], json.dumps(series_data)),
           mimetype='text/javascript')
       else:
         response = HttpResponse(content=json.dumps(series_data), mimetype='application/json')
-
       response['Pragma'] = 'no-cache'
       response['Cache-Control'] = 'no-cache'
       return response
@@ -157,7 +173,6 @@ def renderView(request):
 
       log.rendering('Total rawData rendering time %.6f' % (time() - start))
       return response
-
   # We've got the data, now to render it
   graphOptions['data'] = data
   if settings.REMOTE_RENDERING: # Rendering on other machines is faster in some situations
