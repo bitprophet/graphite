@@ -386,6 +386,29 @@ class LineGraph(Graph):
   validAreaModes = ('none','first','all','stacked')
   validPieModes = ('maximum', 'minimum', 'average')
 
+  def makeLabel(self, yValue):
+    yStep = self.yStep
+    ySpan = self.ySpan
+    yUnitSystem = self.params.get('yUnitSystem')
+    yValue, prefix = format_units(yValue, yStep, system=yUnitSystem)
+    ySpan, spanPrefix = format_units(ySpan, yStep, system=yUnitSystem)
+    if yValue < 0.1:
+      return "%g %s" % (float(yValue), prefix)
+    elif yValue < 1.0:
+      return "%.2f %s" % (float(yValue), prefix)
+    if ySpan > 10 or spanPrefix != prefix:
+      if type(yValue) is float:
+        return "%.1f %s" % (float(yValue), prefix)
+      else:
+        return "%d %s " % (int(yValue), prefix)
+    elif ySpan > 3:
+      return "%.1f %s " % (float(yValue), prefix)
+    elif ySpan > 0.1:
+      return "%.2f %s " % (float(yValue), prefix)
+    else:
+      return "%g %s" % (float(yValue), prefix)
+
+
   def drawGraph(self,**params):
     # Make sure we've got datapoints to draw
     if self.data:
@@ -849,30 +872,8 @@ class LineGraph(Graph):
 
     if not self.params.get('hideAxes',False):
       #Create and measure the Y-labels
-
-      def makeLabel(yValue):
-        yValue, prefix = format_units(yValue, self.yStep,
-                system=self.params.get('yUnitSystem'))
-        ySpan, spanPrefix = format_units(self.ySpan, self.yStep,
-                system=self.params.get('yUnitSystem'))
-        if yValue < 0.1:
-          return "%g %s" % (float(yValue), prefix)
-        elif yValue < 1.0:
-          return "%.2f %s" % (float(yValue), prefix)
-        if ySpan > 10 or spanPrefix != prefix:
-          if type(yValue) is float:
-            return "%.1f %s" % (float(yValue), prefix)
-          else:
-            return "%d %s " % (int(yValue), prefix)
-        elif ySpan > 3:
-          return "%.1f %s " % (float(yValue), prefix)
-        elif ySpan > 0.1:
-          return "%.2f %s " % (float(yValue), prefix)
-        else:
-          return "%g %s" % (float(yValue), prefix)
-
       self.yLabelValues = self.getYLabelValues(self.yBottom, self.yTop)
-      self.yLabels = map(makeLabel,self.yLabelValues)
+      self.yLabels = map(self.makeLabel, self.yLabelValues)
       self.yLabelWidth = max([self.getExtents(label)['width'] for label in self.yLabels])
 
       if self.params.get('yAxisSide') == 'left': #scoot the graph over to the left just enough to fit the y-labels
