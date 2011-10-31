@@ -386,8 +386,8 @@ class LineGraph(Graph):
   validAreaModes = ('none','first','all','stacked')
   validPieModes = ('maximum', 'minimum', 'average')
 
-  def makeLabel(self, yValue):
-    yStep = self.yStep
+  def makeLabel(self, yValue, ignore_step=False):
+    yStep = self.yStep if not ignore_step else None
     ySpan = self.ySpan
     yUnitSystem = self.params.get('yUnitSystem')
     yValue, prefix = format_units(yValue, yStep, system=yUnitSystem)
@@ -1402,7 +1402,7 @@ def reverse_sort_stacked(series_list):
   stacked.reverse()
   return stacked + not_stacked
 
-def format_units(v, step, system="si"):
+def format_units(v, step=None, system="si"):
   """Format the given value in standardized units.
 
   ``system`` is either 'binary' or 'si'
@@ -1411,9 +1411,9 @@ def format_units(v, step, system="si"):
     http://en.wikipedia.org/wiki/SI_prefix
     http://en.wikipedia.org/wiki/Binary_prefix
   """
-
   for prefix, size in UnitSystems[system]:
-    if abs(v) >= size and step >= size:
+    step_ok = (step >= size) if step is not None else True
+    if abs(v) >= size and step_ok:
       v2 = v / size
       if (v2 - int(v2)) < 0.00000000001 and v > 1:
         v2 = int(v2)

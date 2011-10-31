@@ -151,7 +151,7 @@ def renderView(request):
         }
         formatted_stats = {}
         for key, value in raw_stats.items():
-            formatted_stats[key] = graph.makeLabel(value)
+            formatted_stats[key] = graph.makeLabel(value, ignore_step=True)
         info['stats'] = {'raw': raw_stats, 'formatted': formatted_stats}
         series_data.append(info)
       if 'jsonp' in requestOptions:
