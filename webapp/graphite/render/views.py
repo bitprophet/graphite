@@ -145,13 +145,14 @@ def renderView(request):
             'datapoints': datapoints,
         }
         raw_stats = {
-            'min': min(cleaned),
-            'max': max(cleaned),
-            'mean': sum(cleaned) / len(cleaned)
+            'min': min(cleaned) if cleaned else None,
+            'max': max(cleaned) if cleaned else None,
+            'mean': (sum(cleaned) / len(cleaned)) if cleaned else None
         }
         formatted_stats = {}
         for key, value in raw_stats.items():
-            formatted_stats[key] = graph.makeLabel(value, ignore_step=True)
+            label = graph.makeLabel(value, ignore_step=True) if value else None
+            formatted_stats[key] = label
         info['stats'] = {'raw': raw_stats, 'formatted': formatted_stats}
         series_data.append(info)
       if 'jsonp' in requestOptions:
