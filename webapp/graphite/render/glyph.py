@@ -381,7 +381,8 @@ class LineGraph(Graph):
                   'yUnitSystem', 'logBase','yMinLeft','yMinRight','yMaxLeft', \
                   'yMaxRight', 'yLimitLeft', 'yLimitRight', 'yStepLeft', \
                   'yStepRight', 'rightWidth', 'rightColor', 'rightDashed', \
-                  'leftWidth', 'leftColor', 'leftDashed', 'xFormat')
+                  'leftWidth', 'leftColor', 'leftDashed', 'xFormat',
+                  'yBoundsOnly')
   validLineModes = ('staircase','slope','connected')
   validAreaModes = ('none','first','all','stacked')
   validPieModes = ('maximum', 'minimum', 'average')
@@ -549,7 +550,8 @@ class LineGraph(Graph):
 
     if not self.params.get('hideAxes',False):
       self.drawLabels()
-      if not self.params.get('hideGrid',False): #hideAxes implies hideGrid
+      # hideAxes implies hideGrid; so does yBoundsOnly
+      if not self.params.get('hideGrid',False) and not self.params.get('yBoundsOnly'): 
         self.drawGridLines()
 
     #Finally, draw the graph lines
@@ -1068,13 +1070,18 @@ class LineGraph(Graph):
 
   def getYLabelValues(self, minYValue, maxYValue, yStep=None):
     vals = []
+    yBoundsOnly = self.params.get('yBoundsOnly', False)
     if self.logBase:
       vals = list( logrange(self.logBase, minYValue, maxYValue) )
     else:
       if self.secondYAxis:
         vals = list( frange(minYValue,maxYValue,yStep) )
+        if yBoundsOnly:
+            vals = [minYValue, maxYValue]
       else:
         vals = list( frange(self.yBottom,self.yTop,self.yStep) )
+        if yBoundsOnly:
+            vals = [self.yBottom, self.yTop]
     return vals
 
   def setupXAxis(self):
