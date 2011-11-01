@@ -382,7 +382,7 @@ class LineGraph(Graph):
                   'yMaxRight', 'yLimitLeft', 'yLimitRight', 'yStepLeft', \
                   'yStepRight', 'rightWidth', 'rightColor', 'rightDashed', \
                   'leftWidth', 'leftColor', 'leftDashed', 'xFormat',
-                  'yBoundsOnly')
+                  'yBoundsOnly', 'hideXAxis')
   validLineModes = ('staircase','slope','connected')
   validAreaModes = ('none','first','all','stacked')
   validPieModes = ('maximum', 'minimum', 'average')
@@ -522,7 +522,7 @@ class LineGraph(Graph):
 
     #Setup axes, labels, and grid
     #First we adjust the drawing area size to fit X-axis labels
-    if not self.params.get('hideAxes',False):
+    if not self.params.get('hideAxes', self.params.get('hideXAxis', False)):
       self.area['ymax'] -= self.getExtents()['maxAscent'] * 2
 
     #Now we consolidate our data points to fit in the currently estimated drawing area
